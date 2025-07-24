@@ -1,0 +1,204 @@
+```json
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Project Create a Comprehensive Permit Management System",
+    "version": "v1",
+    "description": "API for managing government permits."
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "OK" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        },
+        "security": []
+      }
+    },
+    "/applications": {
+      "get": {
+        "summary": "Get applications",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": { "type": "integer" },
+            "description": "Page number"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": { "type": "integer" },
+            "description": "Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Application" }
+                }
+              }
+            }
+          }
+        },
+        "security": [{"bearerAuth": []}]
+      },
+      "post": {
+        "summary": "Create application",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Application" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request" }
+        },
+        "security": [{"bearerAuth": []}]
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "summary": "Get application by ID",
+        "parameters": [
+          { "in": "path", "name": "id", "schema": { "type": "integer" }, "required": true }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Application" }
+              }
+            }
+          },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{"bearerAuth": []}]
+      },
+      "put": {
+        "summary": "Update application",
+        "parameters": [
+          { "in": "path", "name": "id", "schema": { "type": "integer" }, "required": true }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Successful" },
+          "400": { "description": "Bad Request" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{"bearerAuth": []}]
+      },
+      "delete": {
+        "summary": "Delete application",
+        "parameters": [
+          { "in": "path", "name": "id", "schema": { "type": "integer" }, "required": true }
+        ],
+        "responses": {
+          "204": { "description": "No Content" },
+          "404": { "description": "Not Found" }
+        },
+        "security": [{"bearerAuth": []}]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "readOnly": true },
+          "applicantName": { "type": "string" },
+          "permitType": { "type": "string" },
+          "status": { "type": "string", "enum": ["Pending", "Approved", "Rejected"] },
+          "submissionDate": { "type": "string", "format": "date" }
+        },
+        "required": ["applicantName", "permitType", "status", "submissionDate"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
+```
